@@ -1,23 +1,23 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { useState } from 'react';
+import { ArrowRight, MapPin, Star, Bike, Sparkles, Leaf, Pizza, Sandwich, Salad, Utensils, Search, ShoppingBag, CakeSlice } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { RestaurantCard } from '@/components/restaurant-card';
+import { restaurants, images } from '@/lib/food';
+import { pageHead } from '@/lib/meta';
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+export const Route = createFileRoute('/')({ head: () => pageHead('Le goût de la Tunisie, livré chez vous', 'Découvrez Carthage Table : pizzas, burgers et saveurs tunisiennes, livrés à votre table.'), component: Home });
+const cuisines = [{ name: 'Tous', icon: Utensils }, { name: 'Italienne', label: 'Pizzas', icon: Pizza }, { name: 'Burgers', icon: Sandwich }, { name: 'Tunisienne', icon: Utensils }, { name: 'Healthy', icon: Salad }, { name: 'Desserts', icon: CakeSlice }];
+function Home() {
+  const [cuisine, setCuisine] = useState('Tous');
+  const visible = (cuisine === 'Tous' ? restaurants : restaurants.filter(r => r.cuisine === cuisine)).slice(0,3);
+  return <>
+    {/* Le premier écran annonce la marque, la destination et le plaisir de manger. */}
+    <section className="hero"><div className="container hero-inner"><div className="hero-copy"><div className="location-tag"><MapPin/>De nos cuisines à votre table · Tunis</div><h1>La Tunisie<br/>a <span className="highlight">bon goût.</span></h1><p className="hero-description">Vos restaurants préférés. Des plats qui font envie.<br/>Et tout le plaisir de bien manger, livré chez vous.</p><div className="hero-buttons"><Button asChild variant="tomato"><Link to="/restaurants">J’ai faim, je commande <ArrowRight/></Link></Button><Button asChild variant="soft"><a href="#comment-ca-marche">Comment ça marche ?</a></Button></div><div className="social-proof"><div className="proof-avatars" aria-hidden="true"><span className="proof-avatar">👩🏽</span><span className="proof-avatar">🧑🏻</span><span className="proof-avatar">👨🏽</span><span className="proof-avatar">👩🏻</span></div><div className="proof-rating"><span className="stars">{Array.from({length:5}, (_,i) => <Star key={i}/>)}</span><p><strong className="text-foreground">Du bonheur</strong> à chaque bouchée</p></div></div></div><div className="hero-art"><Sparkles className="hero-spark" aria-hidden="true"/><img className="hero-pizza" src={images.pizza} alt="Grande pizza garnie de mozzarella, basilic et olives" fetchPriority="high"/><div className="food-stamp"><small>CHAUD DEVANT !</small>100 %<br/>gourmand</div><div className="delivery-note"><div className="note-icon"><Bike size={24}/></div><div><strong>Votre envie, notre mission.</strong><p>Livré chaud. Dégusté heureux.</p></div></div><Leaf className="hero-leaf" aria-hidden="true"/></div></div></section>
+    {/* Bandeau animé léger ; sa copie est masquée aux lecteurs d'écran. */}
+    <div className="marquee"><div className="marquee-track">{[0,1].map(copy => <span key={copy} className="flex items-center gap-10" aria-hidden={copy === 1}>{['Bon appétit, بالشفاء !', 'Du frais. Du bon. Du local.', 'Votre prochaine envie est ici.', 'La Tunisie à votre table.'].map(text => <span key={text} className="flex items-center gap-10"><Sparkles/>{text}</span>)}</span>)}</div></div>
+    <section className="section"><div className="container"><div className="section-heading"><div><p className="eyebrow">LES BONNES ADRESSES, LES VRAIES.</p><h2>Au menu ce soir<span className="text-primary">.</span></h2></div><Link to="/restaurants" className="text-link">Tous les restaurants <ArrowRight/></Link></div><div className="cuisine-row" aria-label="Types de cuisine">{cuisines.map(item => <Button key={item.name} variant="ghost" className={`cuisine-button ${cuisine === item.name ? 'selected' : ''}`} onClick={() => setCuisine(item.name)} aria-pressed={cuisine === item.name}><item.icon/>{item.label ?? item.name}</Button>)}</div><div className="restaurant-grid">{visible.map(restaurant => <RestaurantCard key={restaurant.id} restaurant={restaurant}/>)}</div></div></section>
+    <section className="steps-section" id="comment-ca-marche"><div className="container"><div className="steps-heading"><p className="eyebrow">MOINS D’ATTENTE. PLUS DE PLAISIR.</p><h2>À table en trois étapes.</h2></div><div className="steps-grid">{[{ icon: Search, title: 'Trouvez votre bonheur', text: 'Une envie de pizza, de burger ou de saveurs du pays ? Choisissez votre restaurant.' },{ icon: ShoppingBag, title: 'Composez votre festin', text: 'Vos plats préférés, quelques clics et une adresse. On s’occupe de la suite.' },{ icon: Bike, title: 'Savourez, tout simplement', text: 'Votre repas arrive à votre porte. Payez à la livraison et régalez-vous.' }].map((step,i) => <div key={step.title}><div className="step-icon"><step.icon/><span className="step-number">0{i+1}</span></div><h3>{step.title}</h3><p>{step.text}</p></div>)}</div></div></section>
+    <div className="container callout"><div><h2>Votre cuisine mérite sa place à table.</h2><p>Restaurateurs, partageons le goût des bonnes choses.</p></div><Button asChild variant="gold"><Link to="/restaurateur">Devenir partenaire <ArrowRight/></Link></Button></div>
+  </>;
 }

@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project architecture
+- Use TanStack file routes for each page and React components rather than Angular, because the hosting template requires TanStack Start.
+- Keep the requested design prototype entirely client-side with in-memory cart/order state and clearly labelled demo workspaces; real accounts and ordering require a separate backend implementation.
+- Define all visual tokens and reusable page classes in src/styles.css, and use Button variants for controls so both data-bs-theme themes stay consistent.
+- Store real culinary photography as Lovable asset pointers and keep source downloads outside the repository to avoid bundling binary files.
